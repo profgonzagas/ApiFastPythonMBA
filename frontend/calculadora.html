@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora</title>
+</head>
+<body>
+    <h1>Calculadora</h1>
+
+    <form id="form">
+        <label>Numero 1: <input type="number" id="num1" required></label><br><br>
+        <label>Operacao:
+            <select id="op">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">*</option>
+                <option value="/">/</option>
+            </select>
+        </label><br><br>
+        <label>Numero 2: <input type="number" id="num2" required></label><br><br>
+        <button type="submit">Calcular</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById('form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                numero1: parseFloat(document.getElementById('num1').value),
+                numero2: parseFloat(document.getElementById('num2').value),
+                operacao: document.getElementById('op').value
+            };
+
+            const res = await fetch('http://localhost:8000/calcular', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+            document.getElementById('resultado').innerHTML =
+                '<h2>Resultado: ' + result.resultado + '</h2>';
+        };
+    </script>
+</body>
+</html>

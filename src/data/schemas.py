@@ -1,70 +1,65 @@
-"""
-Schemas Pydantic para validação de dados
-"""
 from pydantic import BaseModel, Field
 from typing import List
 
-class MessageInput(BaseModel):
-    """
-    Schema para entrada de mensagem
-    """
-    text: str = Field(...,
-                      min_length=1,
-                      max_length=500,
-                      description="Texto da mensagem"
-                      )
-    priority: int = Field(
-        default=1,
-        ge=1, #ge= greater equal
-        le=5, #le= less equal
-        description="Prioridade da mensagem (1-5)")
-    
+class CalculatorInput(BaseModel):
+    """ Entrada de operações matemáticas"""
+    numero1: float=Field(..., description="Primeiro número")
+    numero2: float=Field(..., description="Segundo número")
+    operacao: str=Field(..., description="Operação matemática: +,-,*,/")
+
     class Config:
-        json_schema_extra  = {
-            "example": {
-                "text": "Esta é uma mensagem de teste.",
-                "priority": 3
+        json_schema_extra={
+            "example":{
+                "numero1": 10.5,
+                "numero2": 2.0,
+                "operacao": "+"
             }
         }
 
-class MessageOutput(BaseModel):
-    """
-    Schema para saída de mensagem
-    """
-    original_text: str
-    processed_text: str
-    char_count: int
-    word_count: int
-    priority_label: str
+class CalculatorOutput(BaseModel):
+    """ Saída de operações matemáticas"""
+    resultado: float
+    operacao:str
+    expressao:str
 
-
-class PredictionInput(BaseModel):
+class TransactionInput(BaseModel):
+     """
+    Entrada para detecção de fraude em transações
     """
-    Schema de entrada para predição do modelo ML
-    """
-    features: List[float] = Field(
-        ...,
-        min_length=4,
-        max_length=4,
-        description="Lista com exatamente 4 features numéricas"
-    )
+     Time: float = Field(..., ge=0, description="Segundos desde primeira transação do dia")
+     V1: float = Field(..., description="Componente principal 1")
+     V2: float = Field(..., description="Componente principal 2")
+     V3: float = Field(..., description="Componente principal 3")
+     V4: float = Field(..., description="Componente principal 4")
+     V5: float = Field(..., description="Componente principal 5")
+     V6: float = Field(..., description="Componente principal 6")
+     V7: float = Field(..., description="Componente principal 7")
+     V8: float = Field(..., description="Componente principal 8")
+     V9: float = Field(..., description="Componente principal 9")
+     V10: float = Field(..., description="Componente principal 10")
+     Amount: float = Field(..., ge=0, description="Valor da transação (R$)")
 
-    class Config:
+     class Config:
         json_schema_extra = {
             "example": {
-                "features": [5.1, 3.5, 1.4, 0.2]
+                "Time": 50013.74,
+                "V1": -2.58,
+                "V2": 0.26,
+                "V3": -0.23,
+                "V4": -0.25,
+                "V5": -2.35,
+                "V6": -1.63,
+                "V7": -0.10,
+                "V8": 1.67,
+                "V9": -0.89,
+                "V10": -0.60,
+                "Amount": 64.26
             }
         }
-
-class PredictionOutput(BaseModel):
-    """
-    Schema de saída da predição
-    """
-    prediction: int = Field(..., description="Classe predita")
-    probability: float = Field(
-        ..., 
-        ge=0.0, 
-        le=1.0,
-        description="Probabilidade da predição"
-    )
-    model_version: str = Field(..., description="Versão do modelo")
+class FraudPredictionOutput(BaseModel):
+       """Resultado da análise de fraude"""
+       prediction: int = Field(..., description="0=LEGÍTIMA, 1=FRAUDULENTA")
+       prediction_label: str = Field(..., description="Label em português")
+       fraud_probability: float = Field(..., ge=0, le=1, description="Probabilidade de fraude (0-1)")
+       risk_level: str = Field(..., description="BAIXO, MÉDIO ou ALTO")
+       model_version: str = "1.0.0"
